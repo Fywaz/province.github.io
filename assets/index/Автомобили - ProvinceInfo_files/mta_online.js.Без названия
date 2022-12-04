@@ -1,0 +1,17 @@
+var mta_online_timer_modal;var mta_online_timer_modal_repeated;var mta_online_timer;var mta_online_timer_repeated;var mta_online_m=[0,5,10,15,20,25,30,35,40,45,50,55,60];function time_10m(){data_t=new Date();i=data_t.getMinutes();i=i%5;i=5-i;if(i==0){return 305;}
+else{s=data_t.getSeconds();if(s!=0){i=i-1;}
+s=65-s;i=i*60;i=i+s;return i;}}
+function mta_online_next(){data_t=new Date();i=data_t.getMinutes();i=Math.floor(i/5);i=mta_online_m[i];return i;}
+function mta_online(){mta_online_sec=time_10m();$('html').css('overflow','hidden');$.ajax({type:"post",url:"/module/online.php",data:{mobs:mobs,func:"mta_online"},dataType:"json",cache:false,success:function(data){$("#mta_online").html(data);}});mta_online_timer_modal=setTimeout("distribution('1')",mta_online_sec*1000);}
+function mta_online_distribution(id){if(id==1){clearTimeout(mta_online_timer_modal);mta_online_timer_modal=setTimeout("mta_online_rasp('2')",60000);}
+mta_online_info(id);}
+function mta_online_info(id){next=mta_online_next();if(id==1){clearTimeout(mta_online_timer_modal_repeated);}
+else{clearTimeout(mta_online_timer_repeated);}
+$.ajax({type:"post",url:"/module/online.php",data:{id:id,mobs:mobs,func:"mta_online_info"},dataType:"json",cache:false,success:function(data){if(id==1){field="mta_online_info_modal";}
+else{field="mta_online_info";}
+if(window.location.hostname!="newprovince.ru"){if(data.time!=next){if(id==1){mta_online_timer_modal_repeated=setTimeout("mta_online_info('"+id+"')",2000);}
+else{mta_online_timer_repeated=setTimeout("mta_online_info('"+id+"')",2000);}
+mta_online_info(id);}
+else{$("#"+field).html(data.text);}}
+else{$("#"+field).html(data.text);}}});}
+function mta_online_close(){$('html').css('overflow','scroll');$('html').css('overflow-x','hidden');$("#mta_online").html("");clearTimeout(mta_online_timer_modal_repeated);clearTimeout(mta_online_timer_modal);}
