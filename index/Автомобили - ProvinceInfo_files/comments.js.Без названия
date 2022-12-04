@@ -1,0 +1,37 @@
+function comments_conclusion(id){$.ajax({type:"post",url:"/module/comments.php",data:{jobid:id,func:"comments_conclusion"},dataType:"json",cache:false,success:function(data){$("#comments_conclusion").html(data);}});}
+function page_com_func(id,pages){$.ajax({type:"post",url:"/module/comments.php",data:{id:id,pages:pages,func:"page_com_func"},dataType:"json",cache:false,success:function(data){comments_conclusion(id);}});}
+function comments_add(id){function_error_false=0;comment=undefined_validation('comment','Текст комментария');length_validation(comment,'Текст комментария',15,600);if(function_error_false==0){$.ajax({type:"post",url:"/module/comments.php",data:{comment:comment,id:id,func:"comments_add"},dataType:"json",cache:false,success:function(data){if(data.status=="success"){comments_conclusion(id);}
+toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}});}}
+function comments_otvet_add(c,avtor,id,id_section){let answer=`
+  <div class='card dark-card-admin media-ansver'>
+	<div class='card-body'>
+	  <div class='md-form text-white'>
+		<textarea type='text' id='answer_`+c+`' class='md-textarea  form-control text-white' rows='5'>`+avtor+`, </textarea>
+		<label for='comment' data-success='right' class='text-white active'>Ответ</label>
+	  </div>
+	  <center>
+		<button style='display: inline-block;' onclick="comments_otvet_add_func('`+c+`', '`+id+`', '`+id_section+`');" type='button' class='modal_button mb-3'>
+		  <i class='far fa-paper-plane'></i> Отправить
+		</button>
+		<button style='display: inline-block;' onclick="comments_otvet_add_cancel(`+c+`);" type='button' class='modal_button'>
+		  <i class='far fa-trash'></i> Отмена
+		</button>
+	  </center>
+	</div>
+  </div>
+  `;$("#otvform_"+c).html(answer);$(document).ready(function(){$('body,html').animate({scrollTop:$("#otvform_"+c).offset().top-$('nav').innerHeight()-10},200);});}
+function comments_otvet_add_cancel(c){$("#otvform_"+c).html("");}
+function comments_otvet_add_func(c,id,id_section){function_error_false=0;answer=undefined_validation('answer_'+c,'Текст комментария');length_validation(answer,'Текст комментария',20,500);if(function_error_false==0){$.ajax({type:"post",url:"/module/comments.php",data:{answer:answer,id_section:id_section,id:id,func:"comments_otvet_add_func"},dataType:"json",cache:false,success:function(data){if(data.status=="success"){comments_conclusion(id_section);}
+toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}});}}
+function comments_zal(id,type){$.ajax({type:"post",url:"/module/comments.php",data:{id:id,type:type,func:"comments_zal"},dataType:"json",cache:false,success:function(data){if(data.status=="success"){$('html').css('overflow','hidden');$("#conclusion_info").html(data.text);}
+else{toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}}});}
+function comments_zal_func(id,type){function_error_false=0;inputzal=undefined_validation('inputzal','Причина жалобы');length_validation(inputzal,'Причина жалобы',10,300);if(function_error_false==0){$.ajax({type:"post",url:"/module/comments.php",data:{id:id,type:type,inputzal:inputzal,func:"comments_zal_func"},dataType:"json",cache:false,success:function(data){if(data.status=="success"){info_close();}
+toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}});}}
+function comments_del(id,id_section){if(confirm("Вы уверены что хотите удалить этот комментарий?")){$.ajax({type:"post",url:"/module/comments.php",data:{id:id,id_section:id_section,func:"comments_del_func"},dataType:"json",cache:false,success:function(data){if(data.status=="success"){comments_conclusion(id_section);}
+toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}});}}
+function comments_otvet_del(id,id_section){if(confirm("Вы уверены что хотите удалить этот ответ на комментарий?")){$.ajax({type:"post",url:"/module/comments.php",data:{id:id,id_section:id_section,func:"comments_otvet_del_func"},context:$("#errorreg"),dataType:"json",cache:false,success:function(data){if(data.status=="success"){comments_conclusion(id_section);}
+toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}});}}
+function user_ban_form(id_user){$.ajax({type:"post",url:"/module/banuser.php",data:{id_user:id_user,func:"user_ban_form"},dataType:"json",cache:false,success:function(data){if(data.status=="success"){$('html').css('overflow','hidden');$("#conclusion_info").html(data.text);}
+else{toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}}});}
+function user_ban_func(id_user){if(confirm("Вы уверены что хотите его заблокировать?")){$.ajax({type:"post",url:"/module/banuser.php",data:{reason:$('#reason').val(),date:$('#date').val(),id_user:id_user,func:"user_ban_func"},dataType:"json",cache:false,success:function(data){if(data.status=="success"){info_close();}
+toastr[data.status](data.text,toastr.options={'closeButton':true,'progressBar':true,timeOut:5000,"extendedTimeOut":1000});}});}}
